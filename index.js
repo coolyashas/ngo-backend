@@ -12,9 +12,17 @@ require("./config/passport-googleAuth-strategy");
 const path = require("path");
 const bodyParser = require("body-parser");
 
-let port = process.env.PORT || 5000;
 const app = express();
 connectToMongo();
+
+
+const mongoose = require("mongoose");
+
+app.get("/api/db-health", (req, res) => {
+  res.json({
+    mongoState: mongoose.connection.readyState,
+  });
+});
 
 app.use(bodyParser.json({ limit: "10mb" }));
 
@@ -69,7 +77,5 @@ app.use("/api/chatbot", require("./routes/chatbot/Chatbot")); // AI Chatbot
 app.use("/api/ai", require("./routes/ai/AiFeatures")); // New AI Features
 app.use("/api/campaigns", require("./routes/campaigns/Campaigns")); // Campaigns
 app.use("/api/trending", require("./routes/trending/Trending")); // Trending items
-
-app.listen(port, () => console.log("API IS RUNNING 🚀 at port:", port));
 
 module.exports = app;
