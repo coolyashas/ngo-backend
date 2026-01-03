@@ -13,7 +13,13 @@ const path = require("path");
 const bodyParser = require("body-parser");
 
 const app = express();
-connectToMongo();
+// connectToMongo(); // Removed top-level call for serverless stability
+
+// Middleware to ensure DB connection before handling requests
+app.use(async (req, res, next) => {
+  await connectToMongo();
+  next();
+});
 
 const PORT = process.env.PORT || 5000;
 
