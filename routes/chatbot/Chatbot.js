@@ -177,6 +177,9 @@ router.post("/message", async (req, res) => {
        - Start each point in a new line.
        - Add a blank line between items to ensure good spacing.
        - Avoid large blocks of text.
+    7. IMPORTANT: When providing links, format them as Markdown links: [Link Text](URL).
+       - Example: [View Campaign](/campaigns/view/slug)
+       - Example: [Visit Club](/club/username)
    `;
 
     // Get recent conversation history (last 6 messages)
