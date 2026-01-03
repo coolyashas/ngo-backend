@@ -28,7 +28,29 @@ const mongoose = require("mongoose");
 app.get("/api/db-health", (req, res) => {
   res.json({
     mongoState: mongoose.connection.readyState,
+    dbName: mongoose.connection.name,
+    host: mongoose.connection.host,
   });
+});
+
+app.get("/api/debug-data", async (req, res) => {
+  try {
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    const stats = {};
+    
+    for (const col of collections) {
+      const count = await mongoose.connection.db.collection(col.name).countDocuments();
+      stats[col.name] = count;
+    }
+    
+    res.json({
+      connected: mongoose.connection.readyState === 1,
+      dbName: mongoose.connection.name,
+      collections: stats
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.use(bodyParser.json({ limit: "10mb" }));
