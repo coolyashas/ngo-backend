@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args)); // Dynamic import for node-fetch
 const Campaign = require("../../schema/campaigns/CampaignSchema");
 const Event = require("../../schema/events/EventSchema");
 

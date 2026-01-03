@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args)); // Dynamic import for node-fetch
 const ChatHistory = require("../../schema/chatbot/ChatHistorySchema");
 const Club = require("../../schema/club/ClubSchema");
 const Event = require("../../schema/events/EventSchema");
