@@ -78,8 +78,10 @@ app.use("/api/ai", require("./routes/ai/AiFeatures")); // New AI Features
 app.use("/api/campaigns", require("./routes/campaigns/Campaigns")); // Campaigns
 app.use("/api/trending", require("./routes/trending/Trending")); // Trending items
 
-module.exports = app;
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 API running locally on port ${PORT}`);
+  });
+}
 
-app.listen(PORT, () => {
-  console.log(`🚀 API running locally on port ${PORT}`);
-});
+module.exports = app;

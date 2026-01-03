@@ -3,16 +3,39 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
+// Global variable to cache the connection in serverless environments
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
 const connectToMongo = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
+  if (cached.conn) {
+    // console.log("USING CACHED MONGO DB CONNECTION 🌐");
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+    };
+
+    cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((mongoose) => {
+      console.log("CONNECTED TO MONGO DB DATABASE 🌐");
+      return mongoose;
     });
-    console.log("CONNECTED TO MONGO DB DATABASE 🌐");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
   }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
+  }
+
+  return cached.conn;
 };
 
 module.exports = connectToMongo;
