@@ -58,12 +58,20 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET /api/campaigns/:slug - Get campaign by slug
-router.get("/:slug", async (req, res) => {
+// GET /api/campaigns/:idOrSlug - Get campaign by id or slug
+router.get("/:idOrSlug", async (req, res) => {
   try {
-    const { slug } = req.params;
+    const { idOrSlug } = req.params;
+    const mongoose = require("mongoose");
     
-    const campaign = await Campaign.findOne({ slug })
+    let query = {};
+    if (mongoose.Types.ObjectId.isValid(idOrSlug)) {
+      query = { _id: idOrSlug };
+    } else {
+      query = { slug: idOrSlug };
+    }
+    
+    const campaign = await Campaign.findOne(query)
       .populate("clubId", "name email city country tagLine website");
     
     if (!campaign) {
