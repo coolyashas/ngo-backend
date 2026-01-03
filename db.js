@@ -20,6 +20,7 @@ const connectToMongo = async () => {
     const opts = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      dbName: "test", // Explicitly connect to the 'test' database where your data is
     };
 
     cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((mongoose) => {
