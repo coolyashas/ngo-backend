@@ -15,6 +15,7 @@ const bodyParser = require("body-parser");
 const app = express();
 connectToMongo();
 
+const PORT = process.env.PORT || 5000;
 
 const mongoose = require("mongoose");
 
@@ -28,16 +29,13 @@ app.use(bodyParser.json({ limit: "10mb" }));
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (process.env.IGNORE_ORIGINS) {
-        callback(null, true);
-      } else {
-        callback(null, process.env.ORIGIN_URL);
-      }
-    },
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://ngo-three-psi.vercel.app", // TODO: Add your Vercel Frontend URL here
+    ],
     credentials: true,
-    allowedHeaders: ["Set-Cookie", "Content-Type"],
-  }),
+  })
 );
 
 app.use(express.json());
@@ -51,6 +49,8 @@ app.use(
     resave: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 30,
+      secure: process.env.NODE_ENV === "production", // Secure in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Cross-site in production
     },
   }),
 );
@@ -79,3 +79,7 @@ app.use("/api/campaigns", require("./routes/campaigns/Campaigns")); // Campaigns
 app.use("/api/trending", require("./routes/trending/Trending")); // Trending items
 
 module.exports = app;
+
+app.listen(PORT, () => {
+  console.log(`🚀 API running locally on port ${PORT}`);
+});
